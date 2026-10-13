@@ -1,18 +1,345 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Example Student's HCDE 439 Physical Computing Page!</title>
+    <title>Assignment 1: Blink! - HCDE 439</title>
 
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
+
   <body>
-    <h1>Example Student's Assignment 1!</h1>
+    <h1>Assignment 1: Blink! - Holiday Light Show</h1>
+
     <div class="header">
-      <img src="red-panda.jpg" />
-      <p>Here is all the documentation for assignment 1!</p>
+      <p>
+        For this assignment, I created a holiday-themed light show
+        using four LEDs (two red and two green), an Arduino Uno R3,
+        resistors, and a breadboard. Each LED is connected to a
+        separate digital output pin, allowing the LEDs to blink
+        independently. I programmed a sequence where pairs of
+        lights alternate, followed by each LED lighting up individually.
+      </p>
     </div>
+
+    <h2>1. Schematic and Resistor Calculations</h2>
+
+    <figure>
+      <img src="schematic.png"
+          alt="Schematic of four LEDs connected to Arduino" />
+           style="max-width: 100%; height: auto;" />
+      <figcaption>
+        Figure 1. My circuit schematic showing four LED branches.
+        Each LED has its own current-limiting resistor and digital
+        output pin. All four branches share a common GND connection.
+      </figcaption>
+    </figure>
+
+    <h3>Resistor Calculations</h3>
+
+    <p>
+      I used Ohm's Law to calculate appropriate current-limiting
+      resistors. I assumed a 5V Arduino output and selected a
+      target current of 10mA (0.01A) per LED.
+    </p>
+
+    <p>
+      The resistance is calculated using:
+    </p>
+
+    <p>
+      <strong>R = (Vsource - Vled) / I</strong>
+    </p>
+
+    <p>
+      <strong>Red LEDs:</strong>
+      Assuming a forward voltage of 2V:
+    </p>
+
+    <p>
+      R = (5V - 2V) / 0.01A = 300 ohms
+    </p>
+
+    <p>
+      <strong>Green LEDs:</strong>
+      Assuming a forward voltage of 3V:
+    </p>
+
+    <p>
+      R = (5V - 3V) / 0.01A = 200 ohms
+    </p>
+
+    <p>
+      I chose 330-ohm resistors for all four LEDs to limit
+      the current. With these resistors, the estimated current
+      is approximately 9.1mA for each red LED and 6.1mA
+      for each green LED, based on the assumed forward voltages.
+      The actual current depends on the specific LEDs.
+    </p>
+
+    <h2>2. Circuit Implementation</h2>
+
+    <figure>
+      <img src="circuit.png"
+           alt="Arduino Uno connected to four LEDs on a breadboard"
+           style="max-width: 100%; height: auto;" />
+      <figcaption>
+        Figure 2. My breadboard circuit using an Arduino Uno R3,
+        two red LEDs, two green LEDs, and four current-limiting
+        resistors. The LEDs are controlled by digital pins
+        12, 11, 10, and 9. Each LED can be controlled independently.
+      </figcaption>
+    </figure>
+
+    <h2>3. Firmware</h2>
+
+    <p>
+      I wrote Arduino firmware to create a repeating light pattern.
+      The sequence starts with alternating pairs of LEDs and
+      continues with each LED turning on individually.
+      The code uses digitalWrite() to control the LEDs and
+      delay() to determine the duration of each stage.
+    </p>
+
+    <pre><code>
+// Define the digital pin for LED1 (red).
+#define PIN_LED1 12
+
+// Define the digital pin for LED2 (green).
+#define PIN_LED2 11
+
+// Define the digital pin for LED3 (red).
+#define PIN_LED3 10
+
+// Define the digital pin for LED4 (green).
+#define PIN_LED4 9
+
+// Run the setup function once when the Arduino starts.
+void setup() {
+  // Configure LED1 as an output.
+  pinMode(PIN_LED1, OUTPUT);
+
+  // Configure LED2 as an output.
+  pinMode(PIN_LED2, OUTPUT);
+
+  // Configure LED3 as an output.
+  pinMode(PIN_LED3, OUTPUT);
+
+  // Configure LED4 as an output.
+  pinMode(PIN_LED4, OUTPUT);
+}
+
+// Repeat the holiday light pattern continuously.
+void loop() {
+  // Turn on LED1.
+  digitalWrite(PIN_LED1, HIGH);
+
+  // Turn off LED2.
+  digitalWrite(PIN_LED2, LOW);
+
+  // Turn on LED3.
+  digitalWrite(PIN_LED3, HIGH);
+
+  // Turn off LED4.
+  digitalWrite(PIN_LED4, LOW);
+
+  // Immediately move to the next pattern.
+  delay(0);
+
+  // Turn on LED2.
+  digitalWrite(PIN_LED2, HIGH);
+
+  // Turn off LED1.
+  digitalWrite(PIN_LED1, LOW);
+
+  // Turn on LED4.
+  digitalWrite(PIN_LED4, HIGH);
+
+  // Turn off LED3.
+  digitalWrite(PIN_LED3, LOW);
+
+  // Wait for 500 milliseconds.
+  delay(500);
+
+  // Turn on LED1.
+  digitalWrite(PIN_LED1, HIGH);
+
+  // Turn off LED2.
+  digitalWrite(PIN_LED2, LOW);
+
+  // Turn off LED3.
+  digitalWrite(PIN_LED3, LOW);
+
+  // Turn off LED4.
+  digitalWrite(PIN_LED4, LOW);
+
+  // Wait for 500 milliseconds.
+  delay(500);
+
+  // Turn off LED1.
+  digitalWrite(PIN_LED1, LOW);
+
+  // Turn on LED2.
+  digitalWrite(PIN_LED2, HIGH);
+
+  // Keep LED3 off.
+  digitalWrite(PIN_LED3, LOW);
+
+  // Keep LED4 off.
+  digitalWrite(PIN_LED4, LOW);
+
+  // Wait for 500 milliseconds.
+  delay(500);
+
+  // Keep LED1 off.
+  digitalWrite(PIN_LED1, LOW);
+
+  // Turn off LED2.
+  digitalWrite(PIN_LED2, LOW);
+
+  // Turn on LED3.
+  digitalWrite(PIN_LED3, HIGH);
+
+  // Keep LED4 off.
+  digitalWrite(PIN_LED4, LOW);
+
+  // Wait for 500 milliseconds.
+  delay(500);
+
+  // Keep LED1 off.
+  digitalWrite(PIN_LED1, LOW);
+
+  // Keep LED2 off.
+  digitalWrite(PIN_LED2, LOW);
+
+  // Turn off LED3.
+  digitalWrite(PIN_LED3, LOW);
+
+  // Turn on LED4.
+  digitalWrite(PIN_LED4, HIGH);
+
+  // Wait for 500 milliseconds.
+  delay(500);
+}
+    </code></pre>
+
+    <h2>4. Circuit Operation</h2>
+
+    <figure>
+      <img src="blinking.gif"
+           alt="Animated GIF of the four LEDs blinking"
+           style="max-width: 100%; height: auto;" />
+      <figcaption>
+        Figure 3. An animated GIF showing my holiday light
+        pattern in operation. The LEDs are programmed to
+        blink independently, creating an alternating sequence
+        followed by individual flashes.
+      </figcaption>
+    </figure>
+
+    <h2>5. Additional Questions</h2>
+
+    <h3>Question 1: Voltage Across LEDs Over Time</h3>
+
+    <figure>
+      <img src="voltage-chart.png"
+           alt="Voltage versus time graph for all four LEDs"
+           style="max-width: 100%; height: auto;" />
+      <figcaption>
+        Figure 4. The voltage across each LED over time.
+        Red LEDs are modeled as approximately 2V when on,
+        and green LEDs as approximately 3V when on.
+        The voltage is approximately 0V when an LED is off.
+        The programmed pattern repeats approximately every
+        2.5 seconds.
+      </figcaption>
+    </figure>
+
+    <p>
+      The graph illustrates how each LED changes between
+      its on and off states. The very short initial state
+      is modeled as having zero delay, so it is not visible
+      as a sustained interval on the graph.
+    </p>
+
+    <h3>Question 2: How Many LEDs Can Arduino Control?</h3>
+
+    <p>
+      The Arduino Uno R3 has 14 digital I/O pins (D0-D13),
+      so it can theoretically control 14 LEDs independently
+      using those pins. If each LED draws 10mA, the total
+      current for 14 LEDs would be 140mA when all are on.
+    </p>
+
+    <p>
+      The six analog pins (A0-A5) can also function as digital
+      outputs, giving up to 20 independently controlled outputs
+      in theory. However, D0 and D1 are normally used for
+      serial communication, and the Arduino has per-pin and
+      total current limits. Driving 20 LEDs at 10mA each
+      would require 200mA, which is not a safe operating
+      target for the Uno's microcontroller.
+      External driver circuitry would be needed for
+      larger LED installations.
+    </p>
+
+    <h3>Question 3: How Fast Must LEDs Blink to Appear Steady?</h3>
+
+    <p>
+      I tested different blinking speeds using my existing
+      Arduino circuit. I gradually decreased the delay
+      between turning an LED on and off.
+    </p>
+
+    <p>
+      In my experiment, the LED appeared continuously lit
+      when the on-time and off-time were each approximately
+      10 milliseconds.
+    </p>
+
+    <p>
+      One complete cycle = 10ms + 10ms = 20ms
+    </p>
+
+    <p>
+      Frequency = 1000ms / 20ms = <strong>50Hz</strong>
+    </p>
+
+    <p>
+      Based on my observation, the flicker fusion threshold
+      was approximately 50 flashes per second under my
+      testing conditions. This threshold can vary depending
+      on the person, LED brightness, and environment.
+    </p>
+
+    <h3>Question 4: AI Usage and Reflection</h3>
+
+    <p>
+      Yes, I used ChatGPT during this assignment.
+      I used it to better understand the assignment
+      requirements, review my resistor calculations,
+      troubleshoot Arduino pin connections, and understand
+      how to represent the LED blinking pattern in a
+      voltage-versus-time graph. I also used it to help
+      organize and write the documentation for my website.
+    </p>
+
+    <p>
+      AI was particularly helpful when I encountered
+      problems with my circuit and needed to understand
+      the possible causes. However, I assembled and tested
+      the physical circuit myself and experimented with
+      different blinking speeds. This assignment helped me
+      better understand Ohm's Law, digital output pins,
+      independent LED control, and the relationship
+      between delay and blinking frequency.
+    </p>
+
+    <p>
+      <a href="index.html">Back to Homepage</a>
+    </p>
+
   </body>
 </html>
