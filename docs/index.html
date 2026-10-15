@@ -1,49 +1,126 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Ici Su's HCDE 439 Physical Computing Page!</title>
+  <title>Ici Su — HCDE 439 Projects</title>
+  <meta name="description" content="Ici Su's HCDE 439 physical computing projects." />
 
-    <link href="style.css" rel="stylesheet" />
-  </head>
-  <body>
-    <h1>Ici's HCDE 439 Physical Computing Page!</h1>
+  <link rel="stylesheet" href="home.css" />
+</head>
 
-    <div class="header">
-      <img src="ici.png" />
-      <p>
-        My name is Ici Su! I'm Ici, an HCDE student at the University of Washington.
-        I'm excited to learn how to build interactive physical computing projects
-        and explore how software and hardware can work together.
-      </p>
-    </div>
+<body>
+  <main class="projects-page">
 
-    <div class="grid">
-      <div class="assignment">
-        <a href="a1.html">
-          <h2>Assignment 1: Blink!</h2>
-          <img src="blinking.gif" />
-        </a>
-        <p>Assignment 1 was a panda!</p>
+    <!-- Minimal header -->
+    <header class="topbar">
+      <a class="brand" href="index.html">ICI SU</a>
+    </header>
+
+    <!-- Projects bookshelf -->
+    <section class="projects" id="projects">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Ici'sPhysical Computing Projects</p>
+          <h1>Projects<span class="heading-period">.</span></h1>
+        </div>
+
+        <p class="section-note">
+          Experiments in code,<br />
+          circuits, and interaction.
+        </p>
       </div>
 
-      <div class="assignment">
-        <a href="a2.html">
-          <h2>Assignment 2: Fade!</h2>
-          <img src="red-panda.jpg" />
-        </a>
-        <p>Assignment 2 was a panda!</p>
-      </div>
+      <div class="shelf">
 
-      <div class="assignment">
-        <a href="a2.html">
-          <h2>Assignment 2: Fade!</h2>
-          <img src="red-panda.jpg" />
-        </a>
-        <p>Assignment 2 was a panda!</p>
+        <div class="shelf-label">
+          <span>01 — SELECTED PROJECTS</span>
+          <span>SELECT A COVER TO EXPLORE ↗</span>
+        </div>
+
+        <div class="project-row">
+
+          <!-- Project 1 -->
+          <a class="project-card blink-card" href="a1.html">
+            <div class="cover-content">
+              <span class="project-number">ASSIGNMENT 01</span>
+              <h2>BLINK!</h2>
+              <p>Holiday Light Show</p>
+            </div>
+
+            <div class="cover-image">
+              <img
+                src="blinking.gif"
+                alt="Four LED Arduino circuit"
+              />
+            </div>
+
+            <div class="cover-footer">
+              <span>4 LEDs</span>
+              <span>ARDUINO UNO ↗</span>
+            </div>
+          </a>
+
+          <!-- Project 2 -->
+          <a class="project-card fade-card" href="a2.html">
+            <div class="cover-content">
+              <span class="project-number">ASSIGNMENT 02</span>
+              <h2>FADE</h2>
+              <p>Light, color &amp; motion</p>
+            </div>
+
+            <div class="fade-art" aria-hidden="true">
+              <span class="circle circle-one"></span>
+              <span class="circle circle-two"></span>
+              <span class="circle circle-three"></span>
+              <span class="orbit"></span>
+            </div>
+
+            <div class="cover-footer">
+              <span>LED · PWM</span>
+              <span>EXPERIMENTS ↗</span>
+            </div>
+          </a>
+
+          <!-- Project 3 -->
+          <div class="project-card soon-card">
+            <div class="cover-content">
+              <span class="project-number">ASSIGNMENT 03</span>
+              <h2>COMING<br />SOON<span class="heading-period">.</span></h2>
+              <p>The next experiment</p>
+            </div>
+
+            <div class="soon-art" aria-hidden="true">
+              <span class="soon-circle"></span>
+              <span class="soon-ring"></span>
+              <span class="soon-square"></span>
+              <span class="soon-star">✳</span>
+            </div>
+
+            <div class="cover-footer">
+              <span>IN PROGRESS</span>
+              <span>STAY TUNED</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Shelf under the covers -->
+        <div class="shelf-plank"></div>
+
+        <div class="shelf-bottom">
+        </div>
+
       </div>
-    </div>
-  </body>
+    </section>
+
+    <footer class="footer">
+      <span>ICI SU © 2026</span>
+      <span>HCDE 439 · PHYSICAL COMPUTING</span>
+    </footer>
+
+  </main>
+</body>
 </html>
