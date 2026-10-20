@@ -308,41 +308,96 @@
       </figcaption>
     </figure>
 
+    
     <h3>Q2. Total Current and Battery Life</h3>
 
     <p>
-      To estimate the maximum LED current, I calculated
-      the current through each LED channel using Ohm's
-      Law and added them together.
+      To calculate the maximum current draw, I used Ohm's Law
+      to estimate the current through each of the five LED
+      channels when they are all fully on.
     </p>
 
     <p>
-      Total LED current = I1 + I2 + I3 + I4 + I5
+      RGB Red: (5V - 2V) / 330Ω = 9.09mA
     </p>
 
     <p>
-      Estimated LED-only battery life =
-      1200mAh / Total LED current (mA)
+      RGB Green: (5V - 2V) / 330Ω = 9.09mA
     </p>
 
     <p>
-      <!-- TODO: Insert calculated total current,
-      compare with Arduino current limits, and
-      calculate battery life. Include Arduino's
-      own power consumption in the discussion. -->
+      RGB Blue: (5V - 3.3V) / 220Ω = 7.73mA
     </p>
 
+    <p>
+      LED 4: (5V - 2V) / 220Ω = 13.64mA
+    </p>
+
+    <p>
+      LED 5: (5V - 2V) / 220Ω = 13.64mA
+    </p>
+
+    <h3>Total Current</h3>
+
+    <p>
+      I_total = 9.09 + 9.09 + 7.73 + 13.64 + 13.64
+      = 53.19mA
+    </p>
+
+    <p>
+      Each LED channel draws less than the recommended
+      20mA per Arduino Uno output pin. The total LED
+      current is below the ATmega328P's 200mA absolute
+      maximum total current rating, although individual
+      pin-group limits must also be considered.
+    </p>
+
+    <h3>Battery Life</h3>
+
+    <p>
+      Battery capacity = 1200mAh
+    </p>
+
+    <p>
+      Battery life = 1200mAh / 53.19mA
+      = approximately 22.6 hours
+    </p>
+
+    <p>
+      This is a theoretical LED-only estimate assuming
+      all five LED channels are fully on. Actual battery
+      life depends on the Arduino's own power consumption,
+      the LED fading patterns, battery voltage, and
+      power conversion efficiency.
+    </p>
+
+
+    
     <h3>Q3. Measured LED Voltage</h3>
 
     <p>
       I used a multimeter to measure the voltage across
-      one LED while it was turned on.
+      the white LED while it was turned on.
+      The measured forward voltage was 2.85V.
     </p>
 
     <p>
-      <!-- TODO: Add LED color, actual measured voltage,
-      theoretical forward voltage, and comparison. -->
+      The theoretical forward voltage of a white LED
+      is typically around 3.0V to 3.3V.
+      I used 3.2V as the reference value.
     </p>
+
+    <p>
+      Difference = 3.2V - 2.85V = 0.35V
+    </p>
+
+    <p>
+      The measured voltage was 0.35V lower than the
+      reference value. This difference may be due to
+      variations in the LED's characteristics,
+      operating current, and temperature.
+    </p>
+
 
     <h3>Q4. AI Tools and Reflection</h3>
 
