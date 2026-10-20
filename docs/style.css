@@ -260,3 +260,22 @@ body > .back-link {
   background: #22231f;
   color: #ffffff;
 }
+
+
+/* Assignment 2 video styling */
+
+figure video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  background: #22231f;
+}
+
+/* Video styling on mobile */
+
+@media (max-width: 650px) {
+  figure video {
+    border-radius: 10px;
+  }
+}

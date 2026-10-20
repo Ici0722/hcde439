@@ -1,18 +1,370 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Example Student's HCDE 439 Physical Computing Page!</title>
+    <title>Assignment 2: Light-Up Toy - HCDE 439</title>
 
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
+
   <body>
-    <h1>Example Student's Assignment 2!</h1>
+    <!-- Back to homepage -->
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+
+    <h1>Assignment 2: Interactive Light-Up Toy</h1>
+
+    <!-- Project Overview -->
     <div class="header">
-      <img src="red-panda.jpg" />
-      <p>Here is all the documentation for assignment 2!</p>
+      <p>
+        For this assignment, I designed and built an interactive
+        light-up toy using an Arduino Uno, one RGB LED,
+        two additional LEDs, a push button, resistors,
+        and a breadboard.
+
+        The RGB LED cycles through red, green, and blue,
+        gradually fading in and out. The two additional
+        LEDs create a flashing effect alongside the
+        RGB LED.
+
+        A push button allows the user to turn the light
+        show on and off.
+      </p>
     </div>
+
+    <!-- Schematic -->
+    <h2>01. Schematic</h2>
+
+    <p>
+      I created a schematic to plan the connections
+      between the Arduino, LEDs, resistors, and button.
+
+      Each LED channel has its own current-limiting
+      resistor to prevent excessive current.
+      The push button uses Arduino's internal pull-up
+      resistor, so no external button resistor is needed.
+    </p>
+
+    <figure>
+      <img
+        src="a2-schematic.png"
+        alt="Schematic of RGB LED, two additional LEDs, and button"
+      />
+      <figcaption>
+        Figure 1. Circuit schematic showing the RGB LED
+        connected to PWM pins 9, 10, and 11, two additional
+        LEDs connected to pins 7 and 8, and the push button
+        connected to pin 2 and GND.
+      </figcaption>
+    </figure>
+
+    <!-- Resistor Calculation -->
+    <h3>Resistor Calculations</h3>
+
+    <p>
+      I used Ohm's Law to calculate appropriate current-limiting
+      resistors for the LEDs.
+    </p>
+
+    <p>
+      R = (Vsource - Vforward) / I
+    </p>
+
+    <p>
+      For the red LED, assuming a forward voltage of 2V
+      and a target current of 10mA:
+    </p>
+
+    <p>
+      R = (5V - 2V) / 0.01A = 300Ω
+    </p>
+
+    <p>
+      For the blue LED, assuming a forward voltage of 3.3V
+      and a target current of 10mA:
+    </p>
+
+    <p>
+      R = (5V - 3.3V) / 0.01A = 170Ω
+    </p>
+
+    <p>
+      I selected resistor values based on the available
+      components and the expected current through each
+      LED. The same method was used to evaluate the
+      remaining LEDs.
+    </p>
+
+    <p>
+      <!-- TODO: Add actual resistor values and current
+      calculations for all five LED channels. -->
+    </p>
+
+    <!-- Circuit -->
+    <h2>02. Circuit Implementation</h2>
+
+    <p>
+      I assembled the circuit on a breadboard using an
+      Arduino Uno. The RGB LED uses three PWM output pins
+      to control its brightness and color.
+
+      The two additional LEDs provide extra lighting
+      effects. All LED channels use resistors to limit
+      current, and the circuit shares a common ground.
+    </p>
+
+    <figure>
+      <img
+        src="a2-circuit.jpg"
+        alt="Physical Arduino circuit with RGB LED and two additional LEDs"
+      />
+      <figcaption>
+        Figure 2. My completed Arduino circuit showing
+        the RGB LED, two additional LEDs, push button,
+        current-limiting resistors, and jumper wires.
+      </figcaption>
+    </figure>
+
+    <!-- Firmware -->
+    <h2>03. Firmware</h2>
+
+    <p>
+      I modified Arduino's built-in Fade example to
+      control multiple LEDs and respond to button input.
+
+      The program uses analogWrite() to control RGB
+      brightness, digitalRead() to detect button presses,
+      digitalWrite() to switch LEDs on and off, and
+      for loops to repeat the light sequences.
+    </p>
+
+    <pre><code>
+
+      // Define RGB LED pins.
+      int redPin = 11;
+      int greenPin = 10;
+      int bluePin = 9;
+
+      // Define two new LED pins.
+      int led1 = 7;
+      int led2 = 8;
+
+      // Define button pin.
+      int buttonPin = 2;
+
+      // Track whether the light show is on.
+      bool lightOn = false;
+
+      // Remember the previous button state.
+      int lastButtonState = HIGH;
+
+      // Run setup once.
+      void setup() {
+        // Set RGB LED pins as outputs.
+        pinMode(redPin, OUTPUT);
+        pinMode(greenPin, OUTPUT);
+        pinMode(bluePin, OUTPUT);
+
+        // Set new LED pins as outputs.
+        pinMode(led1, OUTPUT);
+        pinMode(led2, OUTPUT);
+
+        // Use the internal pull-up resistor.
+        pinMode(buttonPin, INPUT_PULLUP);
+      }
+
+      // Repeat continuously.
+      void loop() {
+        // Check the button.
+        checkButton();
+
+        // Run the light show when enabled.
+        if (lightOn) {
+          // Fade each RGB color one by one.
+          for (int pin = 11; pin >= 9 && lightOn; pin--) {
+
+            // Turn on LED 1 and turn off LED 2.
+            digitalWrite(led1, HIGH);
+            digitalWrite(led2, LOW);
+
+            // Gradually increase brightness.
+            for (int brightness = 0; brightness <= 255 && lightOn; brightness += 5) {
+              // Set RGB brightness.
+              analogWrite(pin, brightness);
+
+              // Check for another button press.
+              checkButton();
+
+              // Wait 30 milliseconds.
+              delay(30);
+            }
+
+            // Turn off LED 1 and turn on LED 2.
+            digitalWrite(led1, LOW);
+            digitalWrite(led2, HIGH);
+
+            // Gradually decrease brightness.
+            for (int brightness = 255; brightness >= 0 && lightOn; brightness -= 5) {
+              // Set RGB brightness.
+              analogWrite(pin, brightness);
+
+              // Check for another button press.
+              checkButton();
+
+              // Wait 30 milliseconds.
+              delay(30);
+            }
+
+            // Turn off the current RGB color.
+            digitalWrite(pin, LOW);
+          }
+        }
+
+        // Turn off all LEDs when disabled.
+        if (!lightOn) {
+          // Turn off RGB channels.
+          digitalWrite(redPin, LOW);
+          digitalWrite(greenPin, LOW);
+          digitalWrite(bluePin, LOW);
+
+          // Turn off the two new LEDs.
+          digitalWrite(led1, LOW);
+          digitalWrite(led2, LOW);
+        }
+      }
+
+      // Check whether the button was newly pressed.
+      void checkButton() {
+        // Read the current button state.
+        int buttonState = digitalRead(buttonPin);
+
+        // Detect a new button press.
+        if (buttonState == LOW && lastButtonState == HIGH) {
+          // Toggle the light show.
+          lightOn = !lightOn;
+
+          // Wait briefly to reduce button bouncing.
+          delay(50);
+        }
+
+        // Remember the button state.
+        lastButtonState = digitalRead(buttonPin);
+      }
+
+    </code></pre>
+
+    <!-- Operation -->
+    <h2>04. Final Result</h2>
+
+    <p>
+      The final prototype creates an interactive light
+      show. Pressing the button activates the lighting
+      sequence, and pressing it again turns the lights off.
+
+      The RGB LED gradually fades through different
+      colors while the two additional LEDs create
+      alternating lighting effects.
+    </p>
+
+    <figure>
+      <img src="A2 Fade.gif"
+           alt="Animated GIF of the four LEDs fading :D"
+           style="max-width: 100%; height: auto;" />
+      <figcaption>
+        Figure 3. An animated GIF showing LED shows final result in operation. The RGB LED fades through red, green, and blue while the two additional LEDs flash on and off.
+      </figcaption>
+    </figure>
+
+    <!-- Additional Questions -->
+    <h2>05. Additional Questions</h2>
+
+    <h3>Q1. PWM and Voltage Over Time</h3>
+
+    <p>
+      The analogWrite() function uses Pulse Width Modulation
+      (PWM) to control the average power delivered to an LED.
+
+      A value of 64 corresponds to approximately 25% duty
+      cycle, 128 corresponds to approximately 50%, and
+      255 corresponds to 100%.
+
+      The output rapidly switches between HIGH and LOW
+      rather than producing a continuous analog voltage.
+    </p>
+
+    <figure>
+      <img
+        src="a2-pwm-chart.png"
+        alt="PWM voltage versus time for analogWrite values 64, 128, and 255"
+      />
+      <figcaption>
+        Figure 3. PWM waveforms showing the voltage
+        over time for analogWrite(64), analogWrite(128),
+        and analogWrite(255).
+      </figcaption>
+    </figure>
+
+    <h3>Q2. Total Current and Battery Life</h3>
+
+    <p>
+      To estimate the maximum LED current, I calculated
+      the current through each LED channel using Ohm's
+      Law and added them together.
+    </p>
+
+    <p>
+      Total LED current = I1 + I2 + I3 + I4 + I5
+    </p>
+
+    <p>
+      Estimated LED-only battery life =
+      1200mAh / Total LED current (mA)
+    </p>
+
+    <p>
+      <!-- TODO: Insert calculated total current,
+      compare with Arduino current limits, and
+      calculate battery life. Include Arduino's
+      own power consumption in the discussion. -->
+    </p>
+
+    <h3>Q3. Measured LED Voltage</h3>
+
+    <p>
+      I used a multimeter to measure the voltage across
+      one LED while it was turned on.
+    </p>
+
+    <p>
+      <!-- TODO: Add LED color, actual measured voltage,
+      theoretical forward voltage, and comparison. -->
+    </p>
+
+    <h3>Q4. AI Tools and Reflection</h3>
+
+    <p>
+      I used ChatGPT to help understand Arduino functions,
+      calculate resistor values, and troubleshoot my circuit.
+
+      During the process, I encountered issues with LED
+      connections and power supply wiring. I tested
+      individual components and revised the circuit
+      until it worked.
+
+      AI was helpful for explaining unfamiliar concepts
+      and identifying possible issues, but I still needed
+      to physically build, test, and verify the circuit.
+    </p>
+
+    <!-- Back to homepage -->
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+
   </body>
 </html>
+
