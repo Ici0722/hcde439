@@ -750,3 +750,77 @@ body {
 img {
   max-width: 100%;
 }
+
+
+/* =========================================
+   Responsive Layout Fix
+   ========================================= */
+
+/* Allow the page to fill the browser width */
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+/* Make the homepage use the available space */
+.projects-page {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+}
+
+/* Keep content responsive */
+.projects {
+  width: 100%;
+  max-width: none;
+}
+
+/* Make project cards responsive */
+.project-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  width: 100%;
+}
+
+/* Prevent cards from overflowing */
+.project-card {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Responsive images */
+.project-card img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .project-row {
+    gap: 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+  .project-row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .section-heading {
+    display: block;
+  }
+
+  .section-note {
+    margin-top: 20px;
+  }
+
+  .shelf-label {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
