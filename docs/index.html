@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,42 +6,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Ici Su — HCDE 439 Projects</title>
-  <meta name="description" content="Ici Su's HCDE 439 physical computing projects." />
+
+  <meta
+    name="description"
+    content="Ici Su's HCDE 439 physical computing projects."
+  />
 
   <link rel="stylesheet" href="home.css" />
+
+  <style>
+    /* Project 03 — Soft Butter Yellow */
+    .a3-card {
+      background-color: #E8D6A4;
+      color: #22231f;
+    }
+
+    .a3-card .cover-content,
+    .a3-card .cover-footer {
+      background-color: #E8D6A4;
+      color: #22231f;
+    }
+  </style>
 </head>
 
 <body>
   <main class="projects-page">
 
-    <!-- Projects bookshelf -->
+    <!-- Projects Bookshelf -->
     <section class="projects" id="projects">
 
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Ici's Physical Computing Space</p>
-          <h1>Selected Projects<span class="heading-period">.</span></h1>
-        </div>
+          <p class="eyebrow">
+            Ici's Physical Computing Space
+          </p>
 
-      
+          <h1>
+            Selected Projects<span class="heading-period">.</span>
+          </h1>
+        </div>
       </div>
 
       <div class="shelf">
 
         <div class="project-row">
 
-          <!-- Project 1 -->
+          <!-- =================================
+               PROJECT 01: BLINK!
+               ================================= -->
+
           <a class="project-card blink-card" href="a1.html">
+
             <div class="cover-content">
               <span class="project-number">Project 01</span>
+
               <h2>BLINK!</h2>
+
               <p>Holiday Light Show</p>
             </div>
 
             <div class="cover-image">
               <img
                 src="A1 Blink.gif"
-                alt="Four LED Arduino circuit"
+                alt="Animated holiday light show using four LEDs"
               />
             </div>
 
@@ -48,20 +76,28 @@
               <span>4 LEDs</span>
               <span>ARDUINO UNO ↗</span>
             </div>
+
           </a>
 
-          <!-- Project 2 -->
+
+          <!-- =================================
+               PROJECT 02: FADE~
+               ================================= -->
+
           <a class="project-card fade-card" href="a2.html">
+
             <div class="cover-content">
               <span class="project-number">Project 02</span>
+
               <h2>FADE~</h2>
+
               <p>Light, color and button</p>
             </div>
 
             <div class="cover-image">
               <img
                 src="A2 Fade.gif"
-                alt="Four LED Arduino circuit"
+                alt="Animated interactive Arduino light-up toy"
               />
             </div>
 
@@ -69,40 +105,51 @@
               <span>LED · PWM</span>
               <span>EXPERIMENTS ↗</span>
             </div>
+
           </a>
 
-          <!-- Project 3 -->
-          <div class="project-card soon-card">
+
+          <!-- =================================
+               PROJECT 03: INPUT OUTPUT!
+               ================================= -->
+
+          <a class="project-card a3-card" href="a3.html">
+
             <div class="cover-content">
               <span class="project-number">Project 03</span>
-              <h2>COMING<br />SOON<span class="heading-period">.</span></h2>
-              <p>The next experiment</p>
+
+              <h2>INPUT<br />OUTPUT!</h2>
+
+              <p>Smart Light Indicator</p>
             </div>
 
-            <div class="soon-art" aria-hidden="true">
-              <span class="soon-circle"></span>
-              <span class="soon-ring"></span>
-              <span class="soon-square"></span>
-              <span class="soon-star">✳</span>
+            <div class="cover-image">
+              <img
+                src="A3.gif"
+                alt="Animated smart light indicator using a photoresistor and three LEDs"
+              />
             </div>
 
             <div class="cover-footer">
-              <span>IN PROGRESS</span>
-              <span>STAY TUNED</span>
+              <span>LIGHT SENSOR</span>
+              <span>ARDUINO UNO ↗</span>
             </div>
-          </div>
+
+          </a>
 
         </div>
 
-        <!-- Shelf under the covers -->
+        <!-- Shelf under the project cards -->
         <div class="shelf-plank"></div>
 
-        <div class="shelf-bottom">
-        </div>
+        <div class="shelf-bottom"></div>
 
       </div>
+
     </section>
 
+
+    <!-- Footer -->
     <footer class="footer">
       <span>ICI SU © 2026</span>
       <span>HCDE 439 · PHYSICAL COMPUTING</span>

@@ -1,0 +1,934 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Assignment 3: Input Output! - HCDE 439</title>
+
+    <link
+      href="style.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+
+    <!-- Back to homepage -->
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+
+    <h1>Assignment 3: Input Output!</h1>
+
+    <!-- Project Overview -->
+    <div class="header">
+      <p>
+        For this assignment, I designed and built a
+        smart light indicator using an Arduino Uno,
+        a photoresistor, three LEDs, resistors,
+        and a breadboard.
+
+        The photoresistor senses changes in ambient
+        light, while the three LEDs indicate different
+        lighting conditions.
+
+        The red LED indicates darkness, the yellow
+        LED indicates medium lighting, and the green
+        LED indicates bright lighting.
+
+        This project uses a voltage divider to convert
+        changes in light intensity into measurable
+        voltage changes.
+      </p>
+    </div>
+
+
+    <!-- =====================================
+         SECTION 1: SCHEMATIC
+         ===================================== -->
+
+    <h2>01. Schematic</h2>
+
+    <p>
+      I created a schematic to plan the connections
+      between the Arduino Uno, the photoresistor,
+      the voltage divider, and the three LEDs.
+
+      The photoresistor and a fixed 10kΩ resistor
+      form a voltage divider.
+
+      The midpoint of the voltage divider is
+      connected to analog pin A0.
+
+      Each LED is connected to a digital output
+      pin through its own 330Ω resistor.
+    </p>
+
+    <figure>
+      <img
+        src="a3-schematic.png"
+        alt="Arduino voltage divider schematic and resistor calculations"
+      />
+
+      <figcaption>
+        Figure 1. My circuit schematic showing the
+        photoresistor connected to 5V, the fixed 10kΩ
+        resistor connected to GND, and their midpoint
+        connected to A0.
+
+        The red, yellow, and green LEDs are connected
+        to pins 5, 6, and 9, respectively, with
+        individual 330Ω current-limiting resistors.
+      </figcaption>
+    </figure>
+
+
+    <!-- Voltage Divider Calculations -->
+
+    <h3>Voltage Divider Calculations</h3>
+
+    <p>
+      I used a photoresistor as R1 and a fixed
+      10kΩ resistor as R2.
+
+      The photoresistor changes resistance depending
+      on the amount of light reaching it.
+
+      The voltage divider converts these resistance
+      changes into a voltage that Arduino can read
+      through pin A0.
+    </p>
+
+    <p>
+      The voltage divider equation is:
+    </p>
+
+    <p>
+      <strong>
+        Vout = Vin × R2 / (R1 + R2)
+      </strong>
+    </p>
+
+    <p>
+      In my circuit, Vin = 5V and R2 = 10,000Ω.
+    </p>
+
+    <p>
+      Therefore:
+    </p>
+
+    <p>
+      <strong>
+        Vout = 5 × 10,000 / (Rphoto + 10,000)
+      </strong>
+    </p>
+
+    <p>
+      I collected actual analog readings from
+      my Serial Monitor under bright, medium,
+      and dark lighting conditions.
+
+      Since I know the fixed resistor value,
+      I can estimate the photoresistor resistance
+      by rearranging the voltage divider equation.
+    </p>
+
+    <p>
+      <strong>
+        Rphoto = 10,000 × (1023 - Light) / Light
+      </strong>
+    </p>
+
+
+    <h3>Bright Condition</h3>
+
+    <p>
+      Under bright light, my Arduino recorded:
+    </p>
+
+    <p>
+      analogRead(A0) = 988
+    </p>
+
+    <p>
+      Vout = 4.83V
+    </p>
+
+    <p>
+      Rphoto = 10,000 × (1023 - 988) / 988
+    </p>
+
+    <p>
+      <strong>
+        Rbright ≈ 354Ω
+      </strong>
+    </p>
+
+
+    <h3>Medium Condition</h3>
+
+    <p>
+      Under normal room lighting, my Arduino
+      recorded:
+    </p>
+
+    <p>
+      analogRead(A0) = 619
+    </p>
+
+    <p>
+      Vout = 3.03V
+    </p>
+
+    <p>
+      Rphoto = 10,000 × (1023 - 619) / 619
+    </p>
+
+    <p>
+      <strong>
+        Rmedium ≈ 6.53kΩ
+      </strong>
+    </p>
+
+
+    <h3>Dark Condition</h3>
+
+    <p>
+      When I covered the photoresistor,
+      my Arduino recorded:
+    </p>
+
+    <p>
+      analogRead(A0) = 125
+    </p>
+
+    <p>
+      Vout = 0.61V
+    </p>
+
+    <p>
+      Rphoto = 10,000 × (1023 - 125) / 125
+    </p>
+
+    <p>
+      <strong>
+        Rdark ≈ 71.84kΩ
+      </strong>
+    </p>
+
+
+    <h3>Choosing the Fixed Resistor</h3>
+
+    <p>
+      To calculate an appropriate fixed resistor,
+      I used the geometric mean of the estimated
+      bright and dark resistance values.
+    </p>
+
+    <p>
+      R = √(Rbright × Rdark)
+    </p>
+
+    <p>
+      R = √(354 × 71,840)
+    </p>
+
+    <p>
+      <strong>
+        R ≈ 5.04kΩ
+      </strong>
+    </p>
+
+    <p>
+      The geometric mean suggests approximately
+      5.04kΩ as a reference value for this
+      measured resistance range.
+
+      I used an available 10kΩ resistor in my
+      actual circuit because it still produced
+      a wide and measurable voltage range,
+      from approximately 0.61V to 4.83V.
+
+      This range allowed Arduino to distinguish
+      between dark, medium, and bright conditions.
+    </p>
+
+    <p>
+      These resistance values are estimates
+      calculated from my analog readings,
+      rather than direct multimeter measurements.
+    </p>
+
+
+    <!-- LED Resistor Calculations -->
+
+    <h3>LED Resistor Calculations</h3>
+
+    <p>
+      I used Ohm's Law to choose current-limiting
+      resistors for my three LEDs.
+
+      I selected a target current of approximately
+      10mA per LED.
+    </p>
+
+    <p>
+      R = (Vsource - Vforward) / I
+    </p>
+
+    <p>
+      Vsource = 5V
+    </p>
+
+    <p>
+      Target current = 10mA = 0.01A
+    </p>
+
+    <h3>Red and Yellow LEDs</h3>
+
+    <p>
+      Assuming a forward voltage of approximately
+      2.0V:
+    </p>
+
+    <p>
+      R = (5V - 2V) / 0.01A
+    </p>
+
+    <p>
+      R = 300Ω
+    </p>
+
+    <p>
+      I selected the commonly available 330Ω
+      resistor to limit the current.
+    </p>
+
+    <p>
+      I = (5V - 2V) / 330Ω
+    </p>
+
+    <p>
+      <strong>I ≈ 9.09mA</strong>
+    </p>
+
+    <h3>Green LED</h3>
+
+    <p>
+      Assuming a forward voltage of approximately
+      3.2V for the green LED:
+    </p>
+
+    <p>
+      R = (5V - 3.2V) / 0.01A
+    </p>
+
+    <p>
+      R = 180Ω
+    </p>
+
+    <p>
+      I used an available 330Ω resistor,
+      which limits the estimated current to:
+    </p>
+
+    <p>
+      I = (5V - 3.2V) / 330Ω
+    </p>
+
+    <p>
+      <strong>I ≈ 5.45mA</strong>
+    </p>
+
+    <p>
+      All three LEDs have their own resistors,
+      keeping their expected current below
+      10mA per pin under these assumptions.
+
+      Actual LED forward voltages and currents
+      may vary.
+    </p>
+
+
+    <!-- =====================================
+         SECTION 2: CIRCUIT
+         ===================================== -->
+
+    <h2>02. Circuit Implementation</h2>
+
+    <p>
+      I assembled the circuit on a breadboard
+      using an Arduino Uno.
+
+      The photoresistor connects to 5V and
+      the fixed 10kΩ resistor connects to GND.
+
+      Their shared connection point is connected
+      to Arduino analog input pin A0.
+
+      The three LEDs are connected to digital
+      pins 5, 6, and 9.
+
+      Each LED has a 330Ω resistor, and all
+      three LED circuits share a common ground.
+    </p>
+
+    <figure>
+      <img
+        src="A3 Circuit 2.png"
+        alt="Arduino Uno circuit with photoresistor and three LEDs"
+      />
+
+      <figcaption>
+        Figure 2. My completed breadboard circuit
+        with a photoresistor, a 10kΩ fixed resistor,
+        three LEDs, and three 330Ω resistors.
+
+        The Arduino reads the voltage from A0
+        and controls the LEDs based on the
+        detected light level.
+      </figcaption>
+    </figure>
+
+
+    <!-- =====================================
+         SECTION 3: FIRMWARE
+         ===================================== -->
+
+    <h2>03. Firmware</h2>
+
+    <p>
+      I programmed the Arduino to read the
+      voltage divider using analogRead().
+
+      The map() function converts the analog
+      input range of 0–1023 into a PWM output
+      range of 0–255.
+
+      The analogWrite() function controls
+      the green LED brightness.
+
+      I used if-statements to determine
+      which LED should turn on based on
+      the measured light level.
+
+      The program also prints the sensor value,
+      voltage, elapsed time, and lighting condition
+      to the Serial Monitor.
+    </p>
+
+    <h3>Light Level Thresholds</h3>
+
+    <p>
+      <strong>Dark:</strong>
+      Light values from 0 to 349 turn on the red LED.
+    </p>
+
+    <p>
+      <strong>Medium:</strong>
+      Light values from 350 to 699 turn on
+      the yellow LED.
+    </p>
+
+    <p>
+      <strong>Bright:</strong>
+      Light values from 700 to 1023 activate
+      the green LED with PWM brightness control.
+    </p>
+
+    <p>
+      I chose 350 and 700 as thresholds to divide
+      the sensor readings into three useful
+      lighting categories.
+
+      These thresholds correspond to approximately
+      1.71V and 3.42V at A0.
+
+      They are design choices based on my
+      prototype's sensor readings, rather than
+      universal lighting standards.
+    </p>
+
+
+    <!-- Arduino Code -->
+
+    <pre><code>
+// Define the red LED pin.
+const int redLED = 5;
+
+// Define the yellow LED pin.
+const int yellowLED = 6;
+
+// Define the green LED pin.
+const int greenLED = 9;
+
+// Define the photoresistor input pin.
+const int sensorPin = A0;
+
+// Run setup once when Arduino starts.
+void setup() {
+  // Set the red LED as an output.
+  pinMode(redLED, OUTPUT);
+
+  // Set the yellow LED as an output.
+  pinMode(yellowLED, OUTPUT);
+
+  // Set the green LED as an output.
+  pinMode(greenLED, OUTPUT);
+
+  // Set the photoresistor pin as an input.
+  pinMode(sensorPin, INPUT);
+
+  // Start serial communication at 9600 baud.
+  Serial.begin(9600);
+}
+
+// Repeat the main program continuously.
+void loop() {
+  // Read the light sensor value from 0 to 1023.
+  int lightValue = analogRead(sensorPin);
+
+  // Map the sensor value to PWM brightness.
+  int brightness = map(lightValue, 0, 1023, 0, 255);
+
+  // Convert the analog reading to voltage.
+  float voltage = lightValue * 5.0 / 1023.0;
+
+  // Print the elapsed time label.
+  Serial.print("Time: ");
+
+  // Print the elapsed time in milliseconds.
+  Serial.print(millis());
+
+  // Print the sensor reading label.
+  Serial.print(" ms | Light: ");
+
+  // Print the sensor reading.
+  Serial.print(lightValue);
+
+  // Print the voltage label.
+  Serial.print(" | Voltage: ");
+
+  // Print the calculated voltage.
+  Serial.print(voltage);
+
+  // Check whether the room is bright.
+  if (lightValue &gt;= 700) {
+    // Turn off the red LED.
+    digitalWrite(redLED, LOW);
+
+    // Turn off the yellow LED.
+    digitalWrite(yellowLED, LOW);
+
+    // Adjust green LED brightness with PWM.
+    analogWrite(greenLED, brightness);
+
+    // Print the bright condition.
+    Serial.println(" V | BRIGHT");
+  }
+
+  // Check whether the room has medium light.
+  else if (lightValue &gt;= 350) {
+    // Turn off the red LED.
+    digitalWrite(redLED, LOW);
+
+    // Turn on the yellow LED.
+    digitalWrite(yellowLED, HIGH);
+
+    // Turn off the green LED.
+    analogWrite(greenLED, 0);
+
+    // Print the medium condition.
+    Serial.println(" V | MEDIUM");
+  }
+
+  // Handle the dark condition.
+  else {
+    // Turn on the red LED.
+    digitalWrite(redLED, HIGH);
+
+    // Turn off the yellow LED.
+    digitalWrite(yellowLED, LOW);
+
+    // Turn off the green LED.
+    analogWrite(greenLED, 0);
+
+    // Print the dark condition.
+    Serial.println(" V | DARK");
+  }
+
+  // Wait 200 milliseconds before reading again.
+  delay(200);
+}
+    </code></pre>
+
+
+    <!-- =====================================
+         SECTION 4: FINAL RESULT
+         ===================================== -->
+
+    <h2>04. Final Result</h2>
+
+    <p>
+      The final prototype uses a photoresistor
+      to detect changes in ambient light.
+
+      As the light level changes, Arduino reads
+      the voltage divider output and selects
+      the corresponding LED.
+
+      In dark conditions, the red LED is activated.
+
+      Under normal room lighting, the yellow LED
+      is activated.
+
+      Under bright light, the green LED is
+      activated, with its brightness controlled
+      using PWM.
+    </p>
+
+    <figure>
+      <img
+        src="A3.gif"
+        alt="Animated GIF demonstrating the smart light indicator"
+      />
+
+      <figcaption>
+        Figure 3. An animated GIF demonstrating
+        how the light indicator responds to
+        changes in ambient light.
+
+        The photoresistor detects different
+        lighting conditions and the Arduino
+        controls the corresponding LED.
+      </figcaption>
+    </figure>
+
+
+    <!-- Serial Monitor -->
+
+    <h3>Serial Monitor Output</h3>
+
+    <p>
+      I used Serial.begin(9600) to establish
+      serial communication.
+
+      The Serial Monitor displays the elapsed time,
+      light sensor reading, calculated voltage,
+      and lighting condition.
+
+      I collected data under bright, medium,
+      and dark conditions to verify that the
+      voltage divider responds to changes in light.
+    </p>
+
+    <figure>
+      <img
+        src="Serial Monitor Screenshot.png"
+        alt="Arduino Serial Monitor readings"
+      />
+
+      <figcaption>
+        Figure 4. Serial Monitor output showing
+        the changing sensor readings and voltage
+        measurements collected from Arduino pin A0.
+      </figcaption>
+    </figure>
+
+    <h3>Example Serial Monitor Readings</h3>
+
+    <pre><code>Time: 11662 ms | Light: 129 | Voltage: 0.63 V | DARK
+Time: 22521 ms | Light: 596 | Voltage: 2.91 V | MEDIUM
+Time: 31171 ms | Light: 980 | Voltage: 4.79 V | BRIGHT</code></pre>
+
+    <p>
+      These are actual readings from my
+      Serial Monitor.
+
+      The readings show that the voltage
+      decreases when the photoresistor is covered
+      and increases when it is exposed
+      to brighter light.
+    </p>
+
+
+    <!-- =====================================
+         SECTION 5: ADDITIONAL QUESTIONS
+         ===================================== -->
+
+    <h2>05. Additional Questions</h2>
+
+
+    <!-- Question 1 -->
+
+    <h3>
+      Q1. Can the Variable Resistor Be Either R1 or R2?
+    </h3>
+
+    <p>
+      Yes. The variable resistor can be placed
+      at either R1 or R2 in a voltage divider.
+
+      However, its position changes how the
+      output voltage responds to changes in light.
+    </p>
+
+    <p>
+      The voltage divider equation is:
+    </p>
+
+    <p>
+      <strong>
+        Vout = Vin × R2 / (R1 + R2)
+      </strong>
+    </p>
+
+    <h3>Case 1: Photoresistor as R1</h3>
+
+    <p>
+      In my current circuit, the photoresistor
+      is R1 and the fixed 10kΩ resistor is R2.
+    </p>
+
+    <p>
+      Under bright light:
+    </p>
+
+    <p>
+      Vout = 5 × 10,000 / (354 + 10,000)
+    </p>
+
+    <p>
+      <strong>Vout ≈ 4.83V</strong>
+    </p>
+
+    <p>
+      Under dark conditions:
+    </p>
+
+    <p>
+      Vout = 5 × 10,000 / (71,840 + 10,000)
+    </p>
+
+    <p>
+      <strong>Vout ≈ 0.61V</strong>
+    </p>
+
+    <p>
+      In this configuration, brighter light
+      produces a higher output voltage.
+    </p>
+
+
+    <h3>Case 2: Photoresistor as R2</h3>
+
+    <p>
+      If I switch the positions of the resistors,
+      the fixed 10kΩ resistor becomes R1,
+      and the photoresistor becomes R2.
+    </p>
+
+    <p>
+      Under bright light:
+    </p>
+
+    <p>
+      Vout = 5 × 354 / (10,000 + 354)
+    </p>
+
+    <p>
+      <strong>Vout ≈ 0.17V</strong>
+    </p>
+
+    <p>
+      Under dark conditions:
+    </p>
+
+    <p>
+      Vout = 5 × 71,840 / (10,000 + 71,840)
+    </p>
+
+    <p>
+      <strong>Vout ≈ 4.39V</strong>
+    </p>
+
+    <p>
+      In this configuration, brighter light
+      produces a lower output voltage.
+    </p>
+
+    <p>
+      Therefore, both configurations work,
+      but they produce opposite responses.
+
+      The Arduino code must interpret the
+      sensor readings according to the
+      position of the photoresistor.
+    </p>
+
+
+    <!-- Question 2 -->
+
+    <h3>Q2. Voltage at V-measure Over Time</h3>
+
+    <p>
+      I recorded voltage readings from pin A0
+      over approximately 56 seconds.
+
+      I changed the lighting conditions by
+      covering the photoresistor, removing
+      the cover, and exposing it to brighter light.
+    </p>
+
+    <figure>
+      <img
+        src="A3 voltage over time.png"
+        alt="Voltage at A0 over time graph"
+      />
+
+      <figcaption>
+        Figure 5. Voltage at A0 over time.
+
+        The x-axis represents time in seconds,
+        and the y-axis represents voltage
+        in volts.
+
+        The graph uses my actual Serial Monitor
+        readings from a repeated lighting test.
+      </figcaption>
+    </figure>
+
+    <p>
+      At the beginning of the measurement,
+      the voltage was approximately 3.1V
+      under normal room lighting.
+    </p>
+
+    <p>
+      When I covered the photoresistor
+      at approximately 7 seconds,
+      the voltage dropped to about 0.63V.
+    </p>
+
+    <p>
+      When I removed the cover at approximately
+      22 seconds, the voltage returned
+      to around 3.1V.
+    </p>
+
+    <p>
+      When I exposed the photoresistor to
+      brighter light at approximately 26 seconds,
+      the voltage increased to around 4.8V.
+    </p>
+
+    <p>
+      After removing the bright light
+      at approximately 44 seconds,
+      the voltage decreased to about 2.9V.
+    </p>
+
+    <p>
+      This graph demonstrates how changes
+      in light intensity affect the resistance
+      of the photoresistor and therefore
+      change the output voltage of
+      the voltage divider.
+
+      Since the photoresistor is R1 in my
+      circuit, brighter light produces
+      a higher voltage at A0.
+    </p>
+
+
+    <!-- Question 3 -->
+
+    <h3>
+      Q3. 10-bit PWM and 16-bit Analog-to-Digital Converter
+    </h3>
+
+    <p>
+      Currently, Arduino's analogRead()
+      uses a 10-bit analog-to-digital converter.
+
+      This means it produces values
+      from 0 to 1023.
+    </p>
+
+    <p>
+      The analogWrite() function uses
+      8-bit PWM values from 0 to 255.
+    </p>
+
+    <p>
+      My current map() code is:
+    </p>
+
+    <pre><code>int brightness = map(lightValue, 0, 1023, 0, 255);</code></pre>
+
+    <p>
+      If analogRead() used a 16-bit ADC,
+      the input range would become
+      0 to 65,535.
+    </p>
+
+    <p>
+      This is because:
+    </p>
+
+    <p>
+      2^16 = 65,536 possible values
+    </p>
+
+    <p>
+      If analogWrite() used 10-bit PWM,
+      the output range would become
+      0 to 1023.
+    </p>
+
+    <p>
+      This is because:
+    </p>
+
+    <p>
+      2^10 = 1024 possible values
+    </p>
+
+    <p>
+      Therefore, I would update my
+      map() code to:
+    </p>
+
+    <pre><code>int brightness = map(lightValue, 0, 65535, 0, 1023);</code></pre>
+
+    <p>
+      This would allow Arduino to read
+      more precise analog values and provide
+      more PWM brightness levels.
+
+      I would also need to adjust the
+      thresholds in my if-statements
+      to match the new 16-bit input range.
+
+      This would preserve the same
+      lighting conditions while using
+      higher-resolution readings.
+    </p>
+
+
+    <!-- =====================================
+         BACK TO HOMEPAGE
+         ===================================== -->
+
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+
+  </body>
+</html>
