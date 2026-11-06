@@ -1,0 +1,638 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Assignment 4: Libraries! - HCDE 439</title>
+
+    <link
+      href="style.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+
+    <!-- Back to homepage -->
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+
+    <h1>Assignment 4: Libraries!</h1>
+
+    <!-- Project Overview -->
+    <div class="header">
+      <p>
+        For this assignment, I designed and built
+        an interactive servo motor prototype using
+        an Arduino Uno, a pushbutton, a tilt switch,
+        and an SG90 servo motor.
+
+        The pushbutton and tilt switch act as two
+        digital inputs, while the servo motor acts
+        as the output.
+
+        The Arduino reads the states of both inputs
+        and changes the servo motor's position
+        accordingly.
+
+        This project uses the Servo.h library to
+        control the servo motor's angle.
+      </p>
+    </div>
+
+
+    <!-- =====================================
+         SECTION 1: SCHEMATIC
+         ===================================== -->
+
+    <h2>01. Schematic</h2>
+
+    <p>
+      I created a schematic to plan the connections
+      between the Arduino Uno, pushbutton, tilt
+      switch, and servo motor.
+
+      The pushbutton is connected to digital pin D2
+      and GND, while the tilt switch is connected
+      to digital pin D3 and GND.
+
+      The servo motor's signal wire is connected
+      to digital pin D9. Its power and ground wires
+      are connected to 5V and GND, respectively.
+    </p>
+
+    <figure>
+      <img
+        src="A4 Schematic.png"
+        alt="Arduino schematic with button, tilt switch, and servo motor"
+      />
+
+      <figcaption>
+        Figure 1. My circuit schematic showing
+        the pushbutton connected between D2 and GND,
+        the tilt switch connected between D3 and GND,
+        and the servo motor connected to D9, 5V,
+        and GND.
+
+        Both input devices use Arduino's internal
+        pull-up resistors, so no external resistors
+        are required for the switches.
+      </figcaption>
+    </figure>
+
+
+    <!-- Circuit Connections -->
+
+    <h3>Circuit Connections</h3>
+
+    <p>
+      <strong>Pushbutton:</strong>
+      D2 → Button → GND
+    </p>
+
+    <p>
+      <strong>Tilt Switch:</strong>
+      D3 → Tilt Switch → GND
+    </p>
+
+    <p>
+      <strong>Servo Signal:</strong>
+      D9 → Orange/Yellow Wire
+    </p>
+
+    <p>
+      <strong>Servo Power:</strong>
+      5V → Red Wire
+    </p>
+
+    <p>
+      <strong>Servo Ground:</strong>
+      GND → Brown/Black Wire
+    </p>
+
+
+    <!-- Internal Pull-up Resistors -->
+
+    <h3>Internal Pull-up Resistors</h3>
+
+    <p>
+      I used INPUT_PULLUP for both the pushbutton
+      and tilt switch.
+
+      This enables the Arduino's internal pull-up
+      resistors, which keep the input pins HIGH
+      when their switches are open.
+
+      When a switch closes, the corresponding input
+      pin is connected to GND and reads LOW.
+
+      Therefore, no external resistors are required
+      for these two input devices.
+    </p>
+
+
+    <!-- =====================================
+         SECTION 2: CIRCUIT
+         ===================================== -->
+
+    <h2>02. Circuit Implementation</h2>
+
+    <p>
+      I assembled the circuit using an Arduino Uno,
+      a breadboard, jumper wires, a pushbutton,
+      a tilt switch, and an SG90 servo motor.
+
+      The pushbutton connects to D2, and the
+      tilt switch connects to D3.
+
+      Both switches share a common ground through
+      the breadboard's negative power rail.
+
+      The servo motor receives its control signal
+      from D9 and is connected to the Arduino's
+      5V and GND pins.
+    </p>
+
+    <figure>
+      <img
+        src="A4 Circuit.png"
+        alt="Arduino Uno circuit with pushbutton, tilt switch, and servo motor"
+      />
+
+      <figcaption>
+        Figure 2. My completed Arduino circuit
+        with two digital input devices and
+        one servo motor output.
+
+        The button and tilt switch connect to
+        pins D2 and D3, respectively.
+
+        The servo motor is connected to D9 for
+        its control signal, 5V for power,
+        and GND for ground.
+
+        The components share a common ground.
+      </figcaption>
+    </figure>
+
+
+    <!-- =====================================
+         SECTION 3: FIRMWARE
+         ===================================== -->
+
+    <h2>03. Firmware</h2>
+
+    <p>
+      I programmed the Arduino using the Servo.h
+      library to control the servo motor's position.
+
+      The digitalRead() function reads the states
+      of the pushbutton and tilt switch.
+
+      I used if-statements to determine the servo
+      motor's position based on the inputs.
+
+      Because the circuit uses digitalRead()
+      instead of analogRead(), analog sensor
+      calibration is not required.
+    </p>
+
+
+    <!-- Servo Positions -->
+
+    <h3>Servo Motor Positions</h3>
+
+    <p>
+      <strong>Button Pressed:</strong>
+      The servo moves to 180 degrees.
+    </p>
+
+    <p>
+      <strong>Tilt Switch Activated:</strong>
+      When the button is not pressed and the
+      tilt switch is closed, the servo moves
+      to 90 degrees.
+    </p>
+
+    <p>
+      <strong>Neither Input Activated:</strong>
+      The servo returns to 0 degrees.
+    </p>
+
+    <p>
+      I selected 0, 90, and 180 degrees to
+      represent three distinct positions,
+      making the motor's movement easy to observe.
+
+      These values correspond to the requested
+      angular positions of the servo motor.
+    </p>
+
+
+    <!-- Pin and Delay Values -->
+
+    <h3>Choosing the Pin and Delay Values</h3>
+
+    <p>
+      I selected D2 and D3 for the two digital
+      input devices because they can read
+      HIGH and LOW signals.
+
+      Pin D9 is used to send the control pulses
+      to the servo motor through the Servo library.
+
+      The 50-millisecond delay creates a short
+      interval between input readings.
+
+      This reduces how frequently the program
+      checks the switches while keeping the
+      circuit responsive.
+
+      The button takes priority if both inputs
+      are activated simultaneously.
+    </p>
+
+
+    <!-- Arduino Code -->
+
+    <h3>Arduino Code</h3>
+
+    <pre><code>
+// Include the Servo library.
+#include &lt;Servo.h&gt;
+
+// Create a servo object.
+Servo myServo;
+
+// Set the button input pin to D2.
+const int buttonPin = 2;
+
+// Set the tilt switch input pin to D3.
+const int tiltPin = 3;
+
+// Set the servo control pin to D9.
+const int servoPin = 9;
+
+// Run setup once when Arduino starts.
+void setup() {
+  // Enable internal pull-up resistor for button.
+  pinMode(buttonPin, INPUT_PULLUP);
+
+  // Enable internal pull-up resistor for tilt switch.
+  pinMode(tiltPin, INPUT_PULLUP);
+
+  // Attach the servo motor to pin D9.
+  myServo.attach(servoPin);
+
+  // Set the initial servo position to 0 degrees.
+  myServo.write(0);
+}
+
+// Repeat the main program continuously.
+void loop() {
+  // Read the current button state.
+  int buttonState = digitalRead(buttonPin);
+
+  // Read the current tilt switch state.
+  int tiltState = digitalRead(tiltPin);
+
+  // Check whether the button is pressed.
+  if (buttonState == LOW) {
+    // Move the servo to 180 degrees.
+    myServo.write(180);
+  }
+
+  // Check whether the tilt switch is activated.
+  else if (tiltState == LOW) {
+    // Move the servo to 90 degrees.
+    myServo.write(90);
+  }
+
+  // Handle the condition where both inputs are inactive.
+  else {
+    // Return the servo to 0 degrees.
+    myServo.write(0);
+  }
+
+  // Wait 50 milliseconds before checking again.
+  delay(50);
+}
+    </code></pre>
+
+
+    <!-- =====================================
+         SECTION 4: FINAL RESULT
+         ===================================== -->
+
+    <h2>04. Final Result</h2>
+
+    <p>
+      The final prototype uses a pushbutton and
+      a tilt switch to control the angular
+      position of a servo motor.
+
+      When the button is pressed, the servo
+      rotates to 180 degrees.
+
+      When the tilt switch is activated and the
+      button is not pressed, the servo moves
+      to 90 degrees.
+
+      When neither input is activated, the
+      servo returns to 0 degrees.
+
+      This demonstrates how the Arduino can
+      interpret multiple digital inputs and
+      control a physical output using a library.
+    </p>
+
+    <figure>
+      <img
+        src="A4.gif"
+        alt="Animated GIF demonstrating servo motor movement"
+      />
+
+      <figcaption>
+        Figure 3. An animated GIF demonstrating
+        how the servo motor responds to the
+        pushbutton and tilt switch.
+
+        The servo moves between different
+        angular positions depending on
+        the states of the two inputs.
+      </figcaption>
+    </figure>
+
+
+    <!-- =====================================
+         SECTION 5: ADDITIONAL QUESTIONS
+         ===================================== -->
+
+    <h2>05. Additional Questions</h2>
+
+
+    <!-- Question 1 -->
+
+    <h3>Q1. Voltage at Pin 9 Over Time</h3>
+
+    <p>
+      The Servo library controls the servo motor
+      by sending repeated electrical pulses
+      through Arduino pin D9.
+
+      The voltage alternates between approximately
+      0V (LOW) and 5V (HIGH).
+
+      According to the simplified model discussed
+      in class, the signal repeats approximately
+      every 20 milliseconds.
+
+      As the servo moves from 0 to 180 degrees,
+      the duration of each HIGH pulse increases.
+    </p>
+
+    <h3>PWM Signal Near 0 Degrees</h3>
+
+    <figure>
+      <img
+        src="A4 PWM Signal Near 0.png"
+        alt="Theoretical servo PWM voltage near 0 degrees"
+      />
+
+      <figcaption>
+        Figure 4. Theoretical voltage at pin D9
+        near the beginning of the servo movement.
+
+        The x-axis represents time in seconds,
+        and the y-axis represents voltage in volts.
+
+        The signal alternates between 0V and 5V,
+        with relatively short HIGH pulses.
+      </figcaption>
+    </figure>
+
+
+    <h3>PWM Signal Near 180 Degrees</h3>
+
+    <figure>
+      <img
+        src="A4 PWM Signal Near 180.png"
+        alt="Theoretical servo PWM voltage near 180 degrees"
+      />
+
+      <figcaption>
+        Figure 5. Theoretical voltage at pin D9
+        near the end of the servo movement.
+
+        The x-axis represents time in seconds,
+        and the y-axis represents voltage in volts.
+
+        The HIGH pulses are wider than those
+        at the beginning of the movement,
+        while the pulse period remains
+        approximately 20 milliseconds.
+      </figcaption>
+    </figure>
+
+    <p>
+      In the example code, the servo moves from
+      0 to 180 degrees in one-degree increments.
+
+      Each position is followed by a
+      100-millisecond delay.
+
+      Since there are 181 positions,
+      the loop takes approximately:
+
+      <strong>181 × 100ms = 18,100ms = 18.1s</strong>
+    </p>
+
+    <p>
+      The two graphs show zoomed-in portions
+      of the theoretical control signal at
+      the beginning and end of the movement.
+
+      Actual pulse widths depend on the
+      Servo library's configuration.
+    </p>
+
+
+    <!-- Question 2 -->
+
+    <h3>Q2. Addressing Occasional Erroneous Readings</h3>
+
+    <p>
+      If an input device produces an incorrect
+      reading approximately 1% of the time,
+      one possible solution is to use
+      a median filter.
+
+      Instead of using a single reading,
+      the Arduino can collect multiple
+      readings and select the median value.
+
+      This helps reject occasional
+      extreme or incorrect readings.
+    </p>
+
+    <pre><code>
+// Read the input three times.
+readings = [read(), read(), read()]
+
+// Find the middle value.
+value = median(readings)
+
+// Use the filtered value.
+use(value)
+    </code></pre>
+
+    <p>
+      For example, if three readings are
+      100, 101, and 900, the median is 101.
+
+      The incorrect reading of 900 does not
+      significantly affect the result.
+
+      For digital switches, a similar idea
+      can be implemented through repeated
+      sampling and majority voting.
+    </p>
+
+
+    <!-- Question 3 -->
+
+    <h3>Q3. Addressing Sensor Noise</h3>
+
+    <p>
+      If an input device produces readings
+      that randomly fluctuate by approximately
+      10%, one possible solution is
+      to average multiple measurements.
+
+      Averaging can reduce random fluctuations
+      because positive and negative errors
+      may partially cancel each other.
+    </p>
+
+    <pre><code>
+// Initialize the sum.
+sum = 0
+
+// Collect N sensor readings.
+for i in 1..N:
+    // Add each reading to the sum.
+    sum += read()
+
+// Calculate the average measurement.
+value = sum / N
+
+// Use the smoothed measurement.
+use(value)
+    </code></pre>
+
+    <p>
+      This approach is useful for reducing
+      random measurement noise.
+
+      However, averaging does not necessarily
+      correct consistent measurement errors
+      or sensor bias.
+    </p>
+
+
+
+    <!-- Question 4 -->
+
+    <h3>Q4. AI Tools and Reflection</h3>
+
+    <p>
+    I used ChatGPT to help me understand the assignment
+    requirements, correct Arduino syntax and comments,
+    debug my HTML, and maintain consistent formatting
+    with my previous assignments.
+
+    ChatGPT also helped me organize theoretical PWM
+    data and taught me how to create and format
+    graphs in Excel.
+    </p>
+
+    <h3>AI Prompt and Output Summary</h3>
+
+    <p>
+    <strong>Prompt 1:</strong>
+    Help me understand the A4 assignment requirements
+    and identify a simple circuit using components
+    covered in class.
+    </p>
+
+    <p>
+    <strong>AI Output:</strong>
+    Explained the requirements for libraries,
+    input devices, and output devices, and compared
+    possible Arduino circuit designs.
+    </p>
+
+    <p>
+    <strong>Prompt 2:</strong>
+    Help me check my Arduino code syntax and
+    add comments explaining each line.
+    </p>
+
+    <p>
+    <strong>AI Output:</strong>
+    Provided suggestions for Arduino syntax,
+    digitalRead(), INPUT_PULLUP, and Servo library
+    usage, along with line-by-line code comments.
+    </p>
+
+    <p>
+    <strong>Prompt 3:</strong>
+    Help me debug my HTML and keep the formatting
+    consistent with my Assignment 3 webpage.
+    </p>
+
+    <p>
+    <strong>AI Output:</strong>
+    Suggested HTML revisions to maintain consistent
+    headings, image captions, code formatting,
+    and page structure.
+    </p>
+
+    <p>
+    <strong>Prompt 4:</strong>
+    Help me organize the theoretical Servo PWM data
+    and explain how to create graphs in Excel.
+    </p>
+
+    <p>
+    <strong>AI Output:</strong>
+    Helped prepare theoretical PWM data, explained
+    the relationship between pulse width and servo
+    angle, and provided Excel instructions for
+    adjusting the graph axes and comparing waveforms.
+    </p>
+
+    <h3>Reflection</h3>
+
+    <p>
+    Overall, ChatGPT helped me troubleshoot technical
+    issues and improve my understanding of the project.
+
+    It was especially useful for identifying coding
+    mistakes, organizing my documentation, and learning
+    how to visualize data in Excel.
+
+    I also learned how digital inputs can control
+    a servo motor and how pulse width relates to
+    the servo's position.
+    </p>
+
+  </body>
+</html>
