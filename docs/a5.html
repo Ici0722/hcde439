@@ -1,0 +1,1024 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Assignment 5: High(er) Voltage and Transistors! - HCDE 439</title>
+
+    <link
+      href="style.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+
+    <h1>Assignment 5: High(er) Voltage and Transistors!</h1>
+
+    <div class="header">
+      <p>
+        For this assignment, I built an IR
+        remote-controlled fan using an Arduino Uno,
+        an IR receiver, an IRLZ44N N-channel MOSFET,
+        and a DC motor.
+
+        I wanted to try a fan because I thought it
+        would be an interesting output device to
+        include in my circuit.
+
+        The IR receiver reads commands from a remote,
+        and Arduino uses PWM to control the motor
+        through the MOSFET.
+
+        I used a separate 9V battery and an MB-V2
+        power supply module set to 5V to power
+        the motor.
+      </p>
+    </div>
+
+
+    <h2>01. Schematic</h2>
+
+    <p>
+      I created a schematic to plan the connections
+      between the Arduino Uno, IR receiver, MOSFET,
+      motor, flyback diode, and external power supply.
+
+      Arduino pin D9 connects to the MOSFET Gate
+      through a 220Ω resistor.
+
+      A 10kΩ pull-down resistor connects the Gate
+      to GND.
+
+      The MOSFET Drain connects to the motor's
+      negative terminal, and the Source connects
+      to GND.
+
+      The motor's positive terminal connects to
+      the 5V output of the MB-V2 module.
+    </p>
+
+    <figure>
+      <img
+        src="A5 Schematic and Calculation.png"
+        alt="Hand-drawn schematic and resistor calculations"
+      />
+
+      <figcaption>
+        Figure 1. My schematic showing the Arduino,
+        IR receiver, IRLZ44N MOSFET, DC motor,
+        220Ω Gate resistor, 10kΩ pull-down resistor,
+        1N4007 flyback diode, and external power
+        supply.
+
+        The Arduino and MB-V2 module share a
+        common ground.
+      </figcaption>
+    </figure>
+
+
+    <h3>Resistor Calculations</h3>
+
+    <p>
+      I used two resistors in my MOSFET circuit.
+      The 220Ω resistor limits the brief charging
+      current at the Gate, while the 10kΩ resistor
+      helps keep the Gate LOW when the Arduino
+      output is inactive.
+    </p>
+
+    <h3>220Ω Gate Resistor</h3>
+
+    <p>
+      I placed a 220Ω resistor between Arduino
+      pin D9 and the MOSFET Gate.
+
+      The Gate behaves like a small capacitor,
+      so a brief current flows while it charges.
+
+      Using Ohm's Law, I estimated the initial
+      charging current, assuming 5V across
+      the 220Ω resistor.
+    </p>
+
+    <p>I = V / R</p>
+
+    <p>I = 5V / 220Ω</p>
+
+    <p>
+      <strong>I ≈ 0.0227A = 22.7mA</strong>
+    </p>
+
+    <p>
+      This is a simplified estimate of a brief
+      initial current, not a continuous current
+      through the MOSFET Gate.
+
+      The Arduino Uno's 40mA per-pin rating is
+      an absolute maximum, not a recommended
+      continuous operating current.
+    </p>
+
+
+    <h3>10kΩ Pull-down Resistor</h3>
+
+    <p>
+      I placed a 10kΩ resistor between the
+      MOSFET Gate and GND.
+
+      This resistor helps keep the MOSFET off
+      when Arduino pin D9 is inactive,
+      including during startup.
+
+      I used 10kΩ because it is a common
+      pull-down resistor value and draws
+      very little current.
+    </p>
+
+    <p>I = V / R</p>
+
+    <p>I = 5V / 10,000Ω</p>
+
+    <p>
+      <strong>I ≈ 0.0005A = 0.5mA</strong>
+    </p>
+
+
+    <h3>Checking the Gate Voltage</h3>
+
+    <p>
+      When D9 is HIGH, the two resistors
+      form a voltage divider.
+    </p>
+
+    <p>
+      Rtotal = 220Ω + 10,000Ω = 10,220Ω
+    </p>
+
+    <p>I = 5V / 10,220Ω</p>
+
+    <p>
+      <strong>I ≈ 0.489mA</strong>
+    </p>
+
+    <p>Vgate = 5V × 10,000 / 10,220</p>
+
+    <p>
+      <strong>Vgate ≈ 4.89V</strong>
+    </p>
+
+    <p>
+      Since the MOSFET Source connects to GND,
+      the Gate-to-Source voltage (VGS) is
+      approximately 4.89V when D9 is fully HIGH.
+
+      The motor uses a separate power supply,
+      so the motor current does not flow through
+      these Gate resistors.
+    </p>
+
+
+    <h2>02. Circuit Implementation</h2>
+
+    <p>
+      I assembled the circuit on a breadboard
+      using an Arduino Uno, IR receiver,
+      IRLZ44N MOSFET, DC motor, two resistors,
+      a 1N4007 diode, and an external power supply.
+
+      The IR receiver's power pin connects
+      to Arduino 5V, its signal pin connects
+      to D2, and its GND pin connects to GND.
+
+      The MOSFET Gate connects to D9 through
+      the 220Ω resistor.
+
+      The motor's negative terminal connects
+      to the MOSFET Drain, and the Source
+      connects to GND.
+
+      I connected Arduino GND and MB-V2 GND
+      to create a common ground.
+    </p>
+
+    <figure>
+      <img
+        src="A5 Circuit.png"
+        alt="Completed Arduino breadboard circuit"
+      />
+
+      <figcaption>
+        Figure 2. My completed breadboard circuit.
+        The IR receiver sends signals to Arduino
+        pin D2, while D9 controls the MOSFET.
+
+        The motor receives power from the
+        MB-V2 module, which is connected
+        to a separate 9V battery.
+      </figcaption>
+    </figure>
+
+
+    <h3>Flyback Diode</h3>
+
+    <p>
+      I connected a 1N4007 flyback diode
+      across the motor terminals.
+
+      The striped end (cathode) connects to
+      the motor's positive 5V terminal.
+
+      The other end (anode) connects to the
+      motor's negative terminal at the
+      MOSFET Drain.
+
+      Since a motor is an inductive load,
+      it can create a voltage spike when
+      current is suddenly interrupted.
+
+      The diode provides a path for the
+      inductive current and helps protect
+      the MOSFET.
+    </p>
+
+
+    <h2>03. Firmware</h2>
+
+    <p>
+      I used the IRremote library to read
+      signals from the IR remote.
+
+      The IR receiver connects to D2,
+      and the MOSFET is controlled through D9.
+
+      I used if-statements to check the remote
+      commands and analogWrite() to send
+      different PWM values to the motor.
+
+      The code ignores repeated NEC commands
+      and prints recognized commands to
+      the Serial Monitor.
+    </p>
+
+
+    <h3>Remote Control Commands</h3>
+
+    <p>
+      <strong>Button 1:</strong>
+      Command 0x0C, PWM = 180 (Low)
+    </p>
+
+    <p>
+      <strong>Button 2:</strong>
+      Command 0x18, PWM = 220 (Medium)
+    </p>
+
+    <p>
+      <strong>Button 3:</strong>
+      Command 0x5E, PWM = 255 (High)
+    </p>
+
+    <p>
+      <strong>Button 0:</strong>
+      Command 0x16, PWM = 0 (Off)
+    </p>
+
+    <p>
+      These are the PWM values programmed
+      into the Arduino. The motor's actual
+      response depends on the circuit
+      and external power supply.
+    </p>
+
+
+    <pre><code>#include &lt;IRremote.hpp&gt;
+
+// IR receiver is on pin 2
+int irPin = 2;
+
+// motor is on pin 9
+int fanPin = 9;
+
+void setup() {
+  // start with the motor off
+  digitalWrite(fanPin, LOW);
+  pinMode(fanPin, OUTPUT);
+  analogWrite(fanPin, 0);
+
+  // start serial monitor
+  Serial.begin(9600);
+
+  // start the IR receiver
+  IrReceiver.begin(irPin, ENABLE_LED_FEEDBACK);
+}
+
+void loop() {
+  // check if the remote sends something
+  if (IrReceiver.decode()) {
+    // only use NEC signals and ignore repeats
+    if (IrReceiver.decodedIRData.protocol == NEC &amp;&amp;
+        !(IrReceiver.decodedIRData.flags &amp; IRDATA_FLAGS_IS_REPEAT)) {
+      int button = IrReceiver.decodedIRData.command;
+
+      Serial.print("Button: 0x");
+      Serial.println(button, HEX);
+
+      if (button == 0x0C) {
+        analogWrite(fanPin, 180);
+        Serial.println("Low");
+      } else if (button == 0x18) {
+        analogWrite(fanPin, 220);
+        Serial.println("Medium");
+      } else if (button == 0x5E) {
+        analogWrite(fanPin, 255);
+        Serial.println("High");
+      } else if (button == 0x16) {
+        analogWrite(fanPin, 0);
+        Serial.println("Off");
+      }
+    }
+
+    IrReceiver.resume();
+  }
+}</code></pre>
+
+
+    <h2>04. Final Result</h2>
+
+    <p>
+      My final prototype uses an IR remote as
+      the input and a DC motor as the output.
+
+      When Arduino receives a recognized remote
+      command, it updates the PWM value on D9.
+
+      The MOSFET controls the motor using power
+      from the external 5V supply.
+
+      My code includes three PWM settings
+      and an off command.
+    </p>
+
+    <figure>
+      <img
+        src="A5.gif"
+        alt="GIF demonstrating the IR remote-controlled fan"
+      />
+
+      <figcaption>
+        Figure 3. My IR remote-controlled
+        fan demonstration.
+      </figcaption>
+    </figure>
+
+
+    <h2>05. Technical Explanation</h2>
+
+    <h3>Why Use a MOSFET?</h3>
+
+    <p>
+      I used an IRLZ44N N-channel MOSFET
+      because the motor can draw more current
+      than an Arduino output pin should supply.
+
+      Instead of powering the motor directly
+      from Arduino pin D9, the MOSFET lets
+      Arduino control a separate motor circuit.
+
+      The Gate receives the control signal,
+      the Drain connects to the motor's
+      negative terminal, and the Source
+      connects to GND.
+    </p>
+
+
+    <h3>How Does PWM Control the Motor?</h3>
+
+    <p>
+      I used analogWrite() to control
+      the MOSFET using Pulse Width Modulation
+      (PWM).
+
+      PWM switches the MOSFET on and off
+      quickly rather than providing a
+      continuously changing voltage.
+
+      A higher PWM value increases the duty
+      cycle, which can increase the motor's
+      average power and speed.
+    </p>
+
+
+    <h3>External Power Supply and Common Ground</h3>
+
+    <p>
+      My DC motor is rated for 3–6V,
+      so I did not connect it directly
+      to the 9V battery.
+
+      Instead, I connected the battery
+      to the MB-V2 power supply module
+      and set the module to 5V.
+
+      This powers the motor separately
+      from the Arduino's USB connection.
+
+      I connected Arduino GND to MB-V2 GND
+      so that the two circuits share the
+      same voltage reference.
+
+      I did not connect Arduino 5V directly
+      to the external module's 5V output.
+    </p>
+
+
+    <h3>MOSFET Datasheet</h3>
+
+    <p>
+      I used an IRLZ44N logic-level
+      N-channel MOSFET.
+
+      According to the manufacturer, its
+      maximum Drain-to-Source voltage is 55V,
+      and its maximum Drain current rating
+      is 47A at 25°C under the specified
+      rating conditions.
+
+      Its maximum on-resistance is 35mΩ
+      at a Gate-to-Source voltage of 4.5V.
+
+      These are component ratings,
+      not measurements of my motor's current.
+    </p>
+
+    <p>
+      The Gate threshold voltage is the
+      voltage where the MOSFET starts to
+      conduct a small current.
+
+      It does not mean the MOSFET is
+      fully turned on.
+    </p>
+
+    <p>
+      Datasheet and specifications:
+      <a href="https://www.infineon.com/part/IRLZ44N">
+        Infineon IRLZ44N Product Page
+      </a>.
+    </p>
+
+    <p>
+      I did not measure the motor's
+      operating current directly,
+      so I am not reporting a measured value.
+    </p>
+
+
+    <h2>06. Additional Questions</h2>
+
+    <h3>Q1. Maximum Current Through the MOSFET</h3>
+
+    <p>
+      I used an IRLZ44N N-channel MOSFET.
+      Pin 2 is the Drain and pin 3 is the Source.
+
+      According to the IRLZ44N datasheet,
+      the absolute maximum continuous Drain current
+      is 47A when the case temperature is 25°C
+      and VGS is 10V.
+
+      This is the component's maximum rating
+      under specified conditions, not the current
+      my motor actually draws.
+    </p>
+
+    <p>
+      Reference:
+      <a href="https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf">
+        IRLZ44N Datasheet, page 1
+      </a>.
+    </p>
+
+
+    <h3>Q2. Motor Circuit with Flyback Diode and Capacitors</h3>
+
+    <p>
+      For this question, I drew a separate schematic
+      using an Arduino Uno, a DC motor, an IRLZ44N
+      MOSFET, a flyback diode, and two capacitors.
+
+      Arduino D9 connects to the MOSFET Gate through
+      a 220Ω resistor, and a 10kΩ pull-down resistor
+      connects the Gate to GND.
+
+      The motor connects between external 5V and
+      the MOSFET Drain, while the Source connects
+      to GND.
+    </p>
+
+    <p>
+      The flyback diode connects in parallel with
+      the motor, with its cathode connected to
+      the motor's positive terminal.
+
+      I added a 100µF electrolytic capacitor and
+      a 0.1µF ceramic capacitor. Both capacitors
+      connect in parallel between external 5V
+      and GND.
+
+      The 100µF capacitor helps reduce larger
+      power supply fluctuations, while the 0.1µF
+      capacitor helps filter higher-frequency noise.
+
+      The 100µF capacitor has a positive and
+      negative terminal, but the ceramic capacitor
+      does not have a polarity.
+
+      Arduino GND and external power GND share
+      a common ground.
+    </p>
+
+    <figure>
+      <img
+        src="A5 Q2.png"
+        alt="Q2 motor schematic with flyback diode and capacitors"
+      />
+
+      <figcaption>
+        Figure 4. My proposed motor circuit with
+        a flyback diode and two capacitors connected
+        between external 5V and GND.
+      </figcaption>
+    </figure>
+
+
+    <h3>Q2. Component Datasheets</h3>
+
+    <p>
+      I found the following parts and manufacturer
+      specifications that could be used in this
+      proposed circuit.
+
+      The example motor and capacitor models are
+      not necessarily the exact components I used
+      in my physical prototype.
+    </p>
+
+    <p>
+      <strong>Arduino Uno R3:</strong>
+      <a href="https://docs.arduino.cc/hardware/uno-rev3/">
+        Arduino Uno R3 Documentation
+      </a>.
+    </p>
+
+    <p>
+      <strong>IRLZ44N MOSFET:</strong>
+      <a href="https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf">
+        Infineon IRLZ44N Datasheet
+      </a>.
+    </p>
+
+    <p>
+      <strong>DC Motor:</strong>
+      <a href="https://www.rcscomponents.kiev.ua/datasheets/RF-300FA.pdf">
+        Mabuchi RF-300FA Motor Datasheet
+      </a>.
+    </p>
+
+    <p>
+      <strong>Flyback Diode:</strong>
+      <a href="https://www.vishay.com/docs/88503/1n4001.pdf">
+        Vishay 1N4007 Datasheet
+      </a>.
+    </p>
+
+    <p>
+      <strong>100µF Electrolytic Capacitor:</strong>
+      <a href="https://www.nichicon.com/en-us/part/uvr1h101mpd/9232/">
+        Nichicon UVR1H101MPD, 100µF, 50V
+      </a>.
+    </p>
+
+    <p>
+      <strong>0.1µF Ceramic Capacitor:</strong>
+      <a href="https://search.kemet.com/component-documentation/download/specsheet/C315C104K5R5TA">
+        KEMET C315C104K5R5TA, 0.1µF, 50V
+      </a>.
+    </p>
+
+    <p>
+      <strong>220Ω and 10kΩ Resistors:</strong>
+      <a href="https://www.digikey.com/en/resources/datasheets/yageo/cfr-series">
+        Yageo CFR Series Resistor Datasheet
+      </a>.
+    </p>
+
+
+    <h3>Q3. L293D Circuit with Two Motors</h3>
+
+    <p>
+      For this question, I drew a separate schematic
+      using an Arduino Uno, the L293D motor driver,
+      two DC motors, and an external power supply.
+
+      The L293D can control the direction of two
+      motors independently using two H-bridge
+      driver sections.
+    </p>
+
+    <p>
+      Pin 16 (VCC1) connects to Arduino 5V
+      for logic power, and pin 8 (VCC2) connects
+      to the external 5V motor supply.
+
+      Pins 4, 5, 12, and 13 connect to GND.
+      Arduino GND and external power GND are
+      also connected together.
+
+      Pins 1 and 9 are Enable pins, and I
+      connected both to Arduino 5V to keep
+      the two motor channels enabled.
+    </p>
+
+    <p>
+      <strong>Motor A:</strong>
+      The motor connects between L293D pins
+      3 (OUT1) and 6 (OUT2).
+      Arduino D3 connects to pin 2 (IN1),
+      and D4 connects to pin 7 (IN2).
+    </p>
+
+    <p>
+      <strong>Motor B:</strong>
+      The motor connects between L293D pins
+      11 (OUT3) and 14 (OUT4).
+      Arduino D5 connects to pin 10 (IN3),
+      and D6 connects to pin 15 (IN4).
+    </p>
+
+    <figure>
+      <img
+        src="A5 Q3.png"
+        alt="L293D schematic with Arduino and two motors"
+      />
+
+      <figcaption>
+        Figure 5. My proposed L293D circuit
+        controlling two DC motors independently.
+      </figcaption>
+    </figure>
+
+    <p>
+      The L293D includes internal clamp diodes
+      for inductive loads.
+
+      Its specified continuous output current
+      is up to 600mA per channel.
+
+      I would check the motors' current requirements
+      before building this circuit.
+    </p>
+
+    <p>
+      Reference:
+      <a href="https://www.ti.com/product/L293D">
+        Texas Instruments L293D Datasheet
+      </a>.
+    </p>
+
+
+    <h3>Q3. Motor Direction Pseudocode</h3>
+
+    <p>
+      This pseudocode shows four motor movements:
+      both forward, both backward, Motor A forward
+      with Motor B backward, and Motor A backward
+      with Motor B forward.
+
+      It is for the proposed circuit and was not
+      tested on a physical L293D chip.
+    </p>
+
+    <pre><code>Start
+
+Set Arduino D3, D4, D5, and D6 as outputs
+Keep both L293D Enable pins HIGH
+
+// both motors forward
+D3 = HIGH
+D4 = LOW
+D5 = HIGH
+D6 = LOW
+Wait 2 seconds
+
+// both motors backward
+D3 = LOW
+D4 = HIGH
+D5 = LOW
+D6 = HIGH
+Wait 2 seconds
+
+// Motor A forward, Motor B backward
+D3 = HIGH
+D4 = LOW
+D5 = LOW
+D6 = HIGH
+Wait 2 seconds
+
+// Motor A backward, Motor B forward
+D3 = LOW
+D4 = HIGH
+D5 = HIGH
+D6 = LOW
+Wait 2 seconds
+
+Repeat</code></pre>
+
+    <p>
+      The actual forward and backward directions
+      depend on how each motor's two wires
+      are connected to the L293D outputs.
+    </p>
+
+
+    <h3>Q4. AI Use</h3>
+
+    <p>
+      Yes, I used ChatGPT during this assignment.
+
+      I used it to understand the MOSFET, motor,
+      flyback diode, power supply module, and IRremote
+      library, and to help with debugging and HTML
+      documentation.
+
+      My full reflection is included in Section 08.
+    </p>
+
+    <p>
+      Below are examples of prompts from our
+      conversation and the corresponding AI responses.
+
+      The prompts and responses have been translated
+      into English and shortened for clarity.
+    </p>
+
+    <p>
+      <strong>Prompt 1:</strong>
+      "Should I include the power supply module
+      in my schematic?"
+    </p>
+
+    <p>
+      <strong>ChatGPT Response:</strong>
+      "Yes, I recommend including the power supply
+      module in your A5 schematic. You do not need
+      to draw its internal circuit."
+    </p>
+
+
+    <p>
+      <strong>Prompt 2:</strong>
+      "The two capacitors are parallel, right?"
+    </p>
+
+    <p>
+      <strong>ChatGPT Response:</strong>
+      "You are correct. I misread the schematic.
+      Both capacitors are connected in parallel
+      across the same 5V and GND nodes."
+    </p>
+
+
+    <h2>07. Reflection</h2>
+
+    <p>
+      The most challenging part of this
+      assignment was getting the IR receiver
+      and DC motor to work together.
+
+      When I tested them separately, both
+      components worked. However, the IR
+      receiver sometimes stopped recognizing
+      commands after the motor started spinning.
+
+      The Serial Monitor showed UNKNOWN
+      signals while Arduino was still running.
+
+      I checked the wiring, common ground,
+      MOSFET connections, flyback diode,
+      and power supply. I also used Serial
+      Monitor messages to test different
+      parts of the circuit separately.
+    </p>
+
+    <p>
+      This assignment helped me understand
+      how to use a MOSFET to control an
+      externally powered motor, why a
+      flyback diode is important, and how
+      different parts of a circuit can
+      affect each other.
+
+      I also learned that debugging physical
+      computing projects requires both
+      code testing and hardware testing.
+    </p>
+
+
+    <h2>08. AI Use and Acknowledgments</h2>
+
+    <h3>Approach to Using AI</h3>
+
+    <p>
+      I used ChatGPT during this assignment,
+      but I wanted to be more intentional
+      about how I used it compared to my
+      previous assignments.
+
+      My goal was to rely less on AI to
+      directly design my circuit and instead
+      use it as a learning tool to explain
+      unfamiliar components, review class
+      concepts, and help me work through
+      problems myself.
+
+      I tried to use ChatGPT as a support
+      for self-learning rather than simply
+      asking it to complete the assignment.
+    </p>
+
+
+    <h3>Learning About Components</h3>
+
+    <p>
+      My original idea was to build a small
+      fan with a DC motor because I thought
+      it would look interesting in my circuit.
+
+      I also wanted to use an IR remote
+      control as the input. At first, I
+      considered a capacitive touch sensor
+      as another possible input, but I
+      eventually decided to use the IR receiver.
+
+      I used ChatGPT to help me understand
+      the components I was considering and
+      refine what I needed to research.
+    </p>
+
+    <p>
+      I uploaded lecture slides from class
+      and asked ChatGPT to explain concepts
+      I did not fully understand, including
+      N-channel MOSFETs, DC motors, inductors,
+      flyback diodes, and external power supplies.
+
+      I also asked it to explain these topics
+      in simpler language and create practice
+      questions to help me review what each
+      component does.
+
+      For example, I asked questions such as
+      "What is a DC motor?", "What does an
+      inductor actually do?", and "Why do we
+      need a diode to prevent current from
+      flowing back?"
+
+      These conversations helped me understand
+      the reasons behind the connections,
+      instead of just copying a circuit.
+    </p>
+
+
+    <h3>Circuit Design and External Power</h3>
+
+    <p>
+      ChatGPT helped me understand how the
+      IR receiver, MOSFET, and DC motor
+      should connect to the Arduino.
+
+      I used its explanations to check my
+      own wiring and schematic, but I built
+      and tested the physical circuit myself.
+
+      I also asked ChatGPT to check whether
+      my schematic matched the actual circuit.
+      One of my questions was, "Should I
+      include the power supply module in
+      my schematic?"
+    </p>
+
+    <p>
+      One of my biggest learning moments
+      involved the external power supply.
+
+      Originally, I thought I only needed
+      an additional battery, so I chose
+      a 9V battery without fully considering
+      the motor's voltage rating.
+
+      Before connecting it directly to
+      the motor, I asked ChatGPT about
+      the power requirements.
+
+      I learned that my motor was rated
+      for 3–6V and that connecting it
+      directly to 9V could damage it.
+
+      ChatGPT helped me understand why
+      I needed the MB-V2 power supply
+      module, how to select its 5V output,
+      and why the Arduino and the external
+      supply need to share a common ground.
+    </p>
+
+
+    <h3>Debugging the Circuit</h3>
+
+    <p>
+      The hardest part was getting the
+      IR receiver and fan to work together.
+
+      At first, I could make the motor spin,
+      and I could read the remote commands
+      when testing the IR receiver separately.
+      However, when I combined them, the
+      receiver sometimes stopped recognizing
+      commands after the fan started spinning.
+
+      I asked ChatGPT to help me narrow
+      down the problem instead of randomly
+      changing every wire.
+    </p>
+
+    <p>
+      ChatGPT suggested checking the MOSFET
+      wiring, the flyback diode, common ground,
+      the external power supply, and possible
+      electrical interference from the motor.
+
+      I used the Serial Monitor to check
+      whether Arduino was still running
+      and whether the IR receiver was
+      decoding commands correctly.
+
+      At one point, I saw repeated UNKNOWN
+      signals while the fan was running.
+
+      Some suggestions did not solve the
+      problem, so I had to keep testing
+      and checking the actual hardware.
+
+      I also asked questions such as,
+      "Do I really need to be able to
+      turn off the fan?" to understand
+      the assignment requirements and
+      prioritize what still needed to work.
+    </p>
+
+
+    <h3>Code and Documentation</h3>
+
+    <p>
+      I used ChatGPT to help me understand
+      the IRremote library and how to read
+      the hexadecimal commands from my remote.
+
+      It helped me check my Arduino syntax,
+      understand how repeated IR signals
+      are handled, and improve the comments
+      in my code.
+
+      I also used ChatGPT to edit my English
+      grammar, review the explanations in
+      my documentation, check references,
+      and debug the HTML so that its format
+      stayed consistent with my previous
+      assignments.
+    </p>
+
+
+    <p>
+      Library used:
+      <a href="https://github.com/Arduino-IRremote/Arduino-IRremote">
+        Arduino-IRremote
+      </a>.
+    </p>
+
+
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+
+  </body>
+</html>
