@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Final Project Proposal: Little Nest - HCDE 439</title>
+
+    <link
+      href="style.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+
+    <h1>Final Project Proposal: Little Nest</h1>
+
+    <div class="header">
+      <p>
+        Little Nest is an interactive phone dock
+        designed to help people build healthier
+        nighttime routines by rewarding them for
+        putting their phones down earlier.
+
+        Instead of using negative reminders or
+        screen-time warnings, Little Nest responds
+        with a playful pixel pet and gentle sounds
+        to make putting a phone away feel rewarding.
+      </p>
+    </div>
+
+    <h2>01. Project Concept and Motivation</h2>
+
+    <p>
+      I often find myself scrolling on my phone
+      longer than I intended, especially after
+      coming home. I wanted to explore a more
+      positive way to encourage myself to put
+      my phone down earlier in the evening.
+    </p>
+
+    <p>
+      When a phone is placed on the dock,
+      Little Nest detects its presence and checks
+      the time using a real-time clock module.
+      The pet's expression and sound change
+      depending on how early the phone is put away.
+    </p>
+
+    <h2>02. Planned Interaction</h2>
+
+    <h3>Before 9:00 PM</h3>
+
+    <p>
+      The pet makes a happy chirping sound and
+      shows an excited pixel expression.
+      This is the most rewarding response.
+    </p>
+
+    <h3>9:00–10:00 PM</h3>
+
+    <p>
+      The pet makes a softer chirp and displays
+      a calm expression.
+    </p>
+
+    <h3>After 10:00 PM</h3>
+
+    <p>
+      The pet makes a sleepy sound and displays
+      a tired expression, encouraging an earlier
+      phone-free routine the next evening.
+    </p>
+
+    <p>
+      The LCD screen will show the current time
+      and brief feedback. A button will provide
+      a second user interaction, such as replaying
+      or silencing the pet's sound.
+    </p>
+
+    <h2>03. Anticipated Bill of Materials</h2>
+
+    <p>
+      <strong>Arduino Uno R3:</strong>
+      Main controller.
+    </p>
+
+    <p>
+      <strong>DS1307 RTC Module:</strong>
+      Keeps track of the time of day.
+    </p>
+
+    <p>
+      <strong>Ultrasonic Sensor:</strong>
+      Detects when a phone is placed on the dock.
+    </p>
+
+    <p>
+      <strong>Button:</strong>
+      Additional user input for sound controls.
+    </p>
+
+    <p>
+      <strong>Passive Buzzer:</strong>
+      Plays different pixel-pet sounds.
+    </p>
+
+    <p>
+      <strong>MAX7219 LED Matrix:</strong>
+      Displays the pixel pet's expressions.
+    </p>
+
+    <p>
+      <strong>LCD1602 Display:</strong>
+      Displays the current time and feedback.
+    </p>
+
+    <p>
+      <strong>Other Materials:</strong>
+      Breadboard, jumper wires, resistors,
+      USB power, and cardboard or foam board
+      for the physical dock.
+    </p>
+
+    <h2>04. Illustration Sketch</h2>
+
+    <p>
+      This sketch shows the proposed phone dock,
+      pixel pet display, time display, and sound
+      feedback for different phone placement times.
+    </p>
+
+    <figure>
+      <img
+        src="final-project-sketch.png"
+        alt="Hand-drawn concept sketch of Little Nest showing a phone dock, pixel pet, clock, and different sound responses"
+      />
+
+      <figcaption>
+        Figure 1. Little Nest concept sketch.
+        Earlier phone placement results in
+        happier pet sounds and expressions.
+      </figcaption>
+    </figure>
+
+    <h2>05. Timeline and Contingency</h2>
+
+    <p>
+      <strong>Week 1:</strong>
+      Test the RTC, passive buzzer, and phone
+      placement sensor.
+    </p>
+
+    <p>
+      <strong>Week 2:</strong>
+      Program the time-based interaction logic
+      and pixel pet expressions.
+    </p>
+
+    <p>
+      <strong>Week 3:</strong>
+      Integrate the LCD, LED matrix, and sound
+      feedback into a physical phone dock.
+    </p>
+
+    <p>
+      <strong>Week 4:</strong>
+      Refine the enclosure, test the interactions,
+      and prepare the final demonstration.
+    </p>
+
+    <p>
+      If the ultrasonic sensor is unreliable,
+      I will use a hidden button or switch to
+      detect phone placement.
+    </p>
+
+    <p>
+      If integrating both displays becomes too
+      complex, I will prioritize the pixel pet
+      display and simplify the time feedback.
+    </p>
+
+    <h2>06. Future Work</h2>
+
+    <p>
+      If time permits, I would like to add a
+      website where users can track rewards
+      and care for a virtual pet. This is an
+      optional extension rather than a requirement
+      for the physical prototype.
+    </p>
+
+    <p class="back-link">
+      <a href="index.html">← Go Back to Projects</a>
+    </p>
+  </body>
+</html>
